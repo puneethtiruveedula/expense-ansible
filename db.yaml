@@ -1,5 +1,5 @@
 - name: configure db server
-  hosts: 172.31.28.218
+  hosts: db
   become: yes
   tasks:
   - name: Install MySQL Server
