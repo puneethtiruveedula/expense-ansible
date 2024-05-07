@@ -1,6 +1,9 @@
 - name: configure backend server
   become: yes
   hosts: backend
+  vars:
+    login_host: 172.31.28.218
+    login_password: Expense@1
   tasks:
   - name: disbale default nodejs
     ansible.builtin.command: dnf module disable nodejs -y
@@ -46,3 +49,31 @@
       src: backend.service
       dest: /etc/systemd/system/backend.service
       
+  - name: install python mysql dependencies
+    ansible.builtin.pip:
+      name:
+      - PyMySQL  # to connect MySQL DB from Ansible
+      - cryptography
+      executable: pip3.9  # pip3.11 if python version is 3.11
+
+  - name: import data into mysql
+    community.mysql.mysql_db:
+      login_user: root
+      login_password: "{{ login_password }}"
+      login_host: "{{ login_host }}"
+      target: /app/schema/backend.sql
+      state: import
+      name: all
+
+  - name: daemon reload
+    ansible.builtin.systemd_sevice:
+      daemon_reload: true
+
+  - name: start and enable backend service
+    ansible.builtin.service:
+      name: backend
+      state: started
+      enabled: yes
+
+
+
