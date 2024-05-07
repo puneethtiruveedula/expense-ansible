@@ -2,7 +2,7 @@
   hosts: db
   become: yes
   vars:
-    login_host: db.daws78s.online
+    login_host: 172.31.28.218
   vars_prompt:
   - name: mysql_root_password
     prompt: please enter MySQL root password
@@ -42,4 +42,4 @@
 
   - name: setup root password
     ansible.builtin.command: "mysql_secure_installation --set-root-pass {{ mysql_root_password }}"
-    when: mysql_connection_output.failed is true # don't give {{ }} in when condition
+    when: mysql_connection_output.failed is true # don't give {{ }} in when conditions
